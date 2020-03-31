@@ -6,6 +6,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.metrics import confusion_matrix
+from sklearn.cross_validation import train_test_split
+from sklearn.cross_validation import cross_val_predict
 
 def ACC(CM):
 	TN = CM[0,0]
@@ -62,37 +64,14 @@ def ALL(data):
 	# Dopasowywanie klasyfikatora do danych
 	qda.fit(data, classes.ravel())
 
-	pred_NB = []
-	for i in range(n):
-		predicted = model.predict([data[i]])
-		if predicted == 1:
-			pred_NB.append(1)
-		if predicted == 2:
-			pred_NB.append(2)
-		if predicted == 3:
-			pred_NB.append(3)
+	
+	pred_NB = model.predict(data)
 	PreCM_NB = confusion_matrix(classes, pred_NB, labels=[1,2,3])
 
-	pred_LDA = []
-	for i in range(n):
-		predicted = lda.predict([data[i]])
-		if predicted == 1:
-			pred_LDA.append(1)
-		if predicted == 2:
-			pred_LDA.append(2)
-		if predicted == 3:
-			pred_LDA.append(3)
+	pred_LDA = lda.predict(data)
 	PreCM_LDA = confusion_matrix(classes, pred_LDA, labels=[1,2,3])
 
-	pred_QDA = []
-	for i in range(n):
-		predicted = qda.predict([data[i]])
-		if predicted == 1:
-			pred_QDA.append(1)
-		if predicted == 2:
-			pred_QDA.append(2)
-		if predicted == 3:
-			pred_QDA.append(3)
+	pred_QDA = qda.predict(data)
 	PreCM_QDA = confusion_matrix(classes, pred_QDA, labels=[1,2,3])
 	#Macierz Pomylek
 	CM_NB = CM(PreCM_NB)
@@ -124,33 +103,11 @@ ALL(data_10)
 ##############################
 def ALL_2(data):
 
-	PU1 = data[:n1/2,:2]
-	PU2 = data[n1:n1+n2/2,:2]
-	PU3 = data[n1+n2:n1+n2+n3/2,:2]
-	PU = np.concatenate((PU1,PU2))
-	PU = np.concatenate((PU,PU3))
+	PW, PU, PW_classes, PU_classes = train_test_split(data, classes, test_size=0.5, random_state=1)
 
-	PW1 = data[n1/2:3*n1/4,:2]
-	PW2 = data[n1+n2/2:n1+3*n2/4,:2]
-	PW3 = data[n1+n2+n3/2:n1+n2+3*n3/4,:2]
-	PW = np.concatenate((PW1,PW2))
-	PW = np.concatenate((PW,PW3))
+	PT, PW, PT_classes, PW_classes = train_test_split(PW, PW_classes, test_size=0.5, random_state=2)
 
-	PT1 = data[3*n1/4:n1,:2]
-	PT2 = data[n1+3*n2/4:n1+n2,:2]
-	PT3 = data[n1+n2+3*n3/4:n,:2]
-	PT = np.concatenate((PT1,PT2))
-	PT = np.concatenate((PT,PT3))
-
-	PU_classes = np.ones(n1/2)
-	PU_classes = np.concatenate((PU_classes, np.ones(n2/2) * 2))
-	PU_classes = np.concatenate((PU_classes, np.ones(n3/2) * 3))
-
-	PW_classes = np.ones(n1/4)
-	PW_classes = np.concatenate((PW_classes, np.ones(n2/4) * 2))
-	PW_classes = np.concatenate((PW_classes, np.ones(n3/4) * 3))
 	
-	PT_classes = PW_classes
 
 	#Naive Bayes
 	# Tworzenie klasyfikatora
@@ -170,38 +127,13 @@ def ALL_2(data):
 	# Dopasowywanie klasyfikatora do danych
 	qda.fit(PU, PU_classes.ravel())
 
-	pred_NB = []
-	for i in range(n/4-1):
-		predicted = model.predict([PW[i]])
-		if predicted == 1:
-			pred_NB.append(1)
-		if predicted == 2:
-			pred_NB.append(2)
-		if predicted == 3:
-			pred_NB.append(3)
+	pred_NB = model.predict(PW)
 	PreCM_NB = confusion_matrix(PW_classes, pred_NB, labels=[1,2,3])
 
-	pred_LDA = []
-	for i in range(n/4-1):
-		predicted = lda.predict([PW[i]])
-		if predicted == 1:
-			pred_LDA.append(1)
-		if predicted == 2:
-			pred_LDA.append(2)
-		if predicted == 3:
-			pred_LDA.append(3)
+	pred_LDA = lda.predict(PW)
 	PreCM_LDA = confusion_matrix(PW_classes, pred_LDA, labels=[1,2,3])
 
-	pred_QDA = []
-	for i in range(n/4-1):
-		predicted = qda.predict([PW[i]])
-		if predicted == 1:
-			pred_QDA.append(1)
-		if predicted == 2:
-			pred_QDA.append(2)
-		if predicted == 3:
-			pred_QDA.append(3)
-
+	pred_QDA = qda.predict(PW)
 	PreCM_QDA = confusion_matrix(PW_classes, pred_QDA, labels=[1,2,3])
 	#Macierz Pomylek
 	CM_NB = CM(PreCM_NB)
@@ -220,59 +152,22 @@ ALL_2(data_2)
 #Kroswalidacja
 ##############################
 def ALL_3(data):
-
-	PU1 = data[:n1/2,:2]
-	PU2 = data[n1:n1+n2/2,:2]
-	PU3 = data[n1+n2:n1+n2+n3/2,:2]
-	PU = np.concatenate((PU1,PU2))
-	PU = np.concatenate((PU,PU3))
-
-	PW1 = data[n1/2:3*n1/4,:2]
-	PW2 = data[n1+n2/2:n1+3*n2/4,:2]
-	PW3 = data[n1+n2+n3/2:n1+n2+3*n3/4,:2]
-	PW = np.concatenate((PW1,PW2))
-	PW = np.concatenate((PW,PW3))
-
-	PT1 = data[3*n1/4:n1,:2]
-	PT2 = data[n1+3*n2/4:n1+n2,:2]
-	PT3 = data[n1+n2+3*n3/4:n,:2]
-	PT = np.concatenate((PT1,PT2))
-	PT = np.concatenate((PT,PT3))
-
-	PU_classes = np.ones(3*n1/4)
-	PU_classes = np.concatenate((PU_classes, np.ones(3*n2/4) * 2))
-	PU_classes = np.concatenate((PU_classes, np.ones(3*n3/4) * 3))
-
-	PT_classes = np.ones(n1/4)
-	PT_classes = np.concatenate((PT_classes, np.ones(n2/4) * 2))
-	PT_classes = np.concatenate((PT_classes, np.ones(n3/4) * 3))
-		
-	PU = np.concatenate((PU, PW))
-
+	#Transformacja danych dla funkcji cross_val_score
+	classes = all_data[:,0]
 
 	#LDA
 	# Tworzenie klasyfikatora
 	lda = LinearDiscriminantAnalysis()
-	# Dopasowywanie klasyfikatora do danych
-	lda.fit(PU, PU_classes.ravel())
-
-	pred_LDA = []
-	for i in range(n/4-1):
-		predicted = lda.predict([PT[i]])
-		if predicted == 1:
-			pred_LDA.append(1)
-		if predicted == 2:
-			pred_LDA.append(2)
-		if predicted == 3:
-			pred_LDA.append(3)
-	PreCM_LDA = confusion_matrix(PT_classes, pred_LDA, labels=[1,2,3])
+	#Cross-validacja
+	pred_LDA = cross_val_predict(lda, data, classes, cv=5)
+	PreCM_LDA = confusion_matrix(classes, pred_LDA, labels=[1,2,3])
 	#Macierz Pomylek
 	CM_LDA = CM(PreCM_LDA)
 
 	
 	print "Wynik z kroswalidacja"
 	print("        ACC      TP    TN    TPR      FPR")
-	print("LDA     %6.4f   %d    %d   %6.4f   %6.4f" % (ACC(CM_LDA), CM_LDA[1,1], CM_LDA[0,0], TPR(CM_LDA), FPR(CM_LDA)))
+	print("LDA     %6.4f   %d   %d  %6.4f   %6.4f" % (ACC(CM_LDA), CM_LDA[1,1], CM_LDA[0,0], TPR(CM_LDA), FPR(CM_LDA)))
 ###############################
 
 ALL_3(data_2)
