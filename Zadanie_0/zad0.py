@@ -44,12 +44,37 @@ x = range(-4,5)
 y = []
 for i in x:
 	y.append(A[1] / A[0] * i)
+#Rzutowanie na prosta
+a1_z = []
+a2_z = []
+a3_z = []
+a = A[1] / A[0]
+def B(ax):
+	return ax[1] + 1/a * ax[0]
+for i in a1:
+	b = B(i)
+	a1_z.append([b/(a+1./a),a*b/(a+1./a)])
+a1_z = np.asarray(a1_z)
+for i in a2:
+	b = B(i)
+	a2_z.append([b/(a+1./a),a*b/(a+1./a)])
+a2_z = np.asarray(a2_z)
+for i in a3:
+	b = B(i)
+	a3_z.append([b/(a+1./a),a*b/(a+1./a)])
+a3_z = np.asarray(a3_z)
+
+a1 = np.concatenate((a1,a1_z))
+a2 = np.concatenate((a2,a2_z))
+a3 = np.concatenate((a3,a3_z))
+
 # Rysowanie kierunku A
 pylab.plot(x, y)
 # Rysowanie punktow z klas
-pylab.plot(a1[:,0], a1[:,1], '.')
-pylab.plot(a2[:,0], a2[:,1], '.')
-pylab.plot(a3[:,0], a3[:,1], '.')
+pylab.plot(a1[:,0], a1[:,1], '.', label='Klasa 1')
+pylab.plot(a2[:,0], a2[:,1], '.', label='Klasa 2')
+pylab.plot(a3[:,0], a3[:,1], '.', label='Klasa 3')
 pylab.title('Kierunek rzutu a')
+pylab.legend()
 pylab.grid(True)
 pylab.show()
