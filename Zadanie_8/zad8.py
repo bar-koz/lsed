@@ -16,17 +16,20 @@ classes_name = ['1','2','3']
 
 x = range(1, 14)
 y = []
+previous = 0
 for i in x:
-	pca = PCA()
-	pca.fit(data[:,:i])
-	y.append(np.sum(np.sqrt(pca.explained_variance_)))
-	print np.sum(np.sqrt(pca.explained_variance_))
+	pca = PCA(n_components=i)
+	pca.fit(data)
+	tmp = pca.explained_variance_
+	previous += np.sqrt(tmp[i-1])
+	y.append(previous)
+	print np.sqrt(tmp[i-1])
 
 pca = PCA()
 pca.fit(data[:,:2])
-print np.sum(np.sqrt(pca.explained_variance_))
+print np.sqrt(pca.explained_variance_)
 pca.fit(data[:,1:3])
-print np.sum(np.sqrt(pca.explained_variance_))
+print np.sqrt(pca.explained_variance_)
 
 #Rysowanie wykresu
 pylab.plot(x, y)
