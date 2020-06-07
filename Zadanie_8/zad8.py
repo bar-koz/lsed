@@ -4,6 +4,8 @@ import numpy as np
 import pylab
 from sklearn.decomposition import PCA
 
+from sklearn.preprocessing import StandardScaler
+
 
 
 #Pobieranie danych z pliku
@@ -23,19 +25,14 @@ for i in x:
 	tmp = pca.explained_variance_
 	previous += np.sqrt(tmp[i-1])
 	y.append(previous)
-	print np.sqrt(tmp[i-1])
+	#print np.sqrt(tmp[i-1])
 #Obliczenia nowych zmiennych
-z1 = pca.components_[0]
-z2 = pca.components_[1]
-z3 = pca.components_[2]
-print z1
-x1 = []
-x2 = []
-x3 = []
-for i in range(0, 178):
-	x1.append(np.sum(z1*data[i:i+1,:]))
-	x2.append(np.sum(z2*data[i:i+1,:]))
-	x3.append(np.sum(z3*data[i:i+1,:]))
+pca = PCA(n_components=13)
+pca.fit(data)
+principalComponents = pca.fit_transform(data)
+
+
+
 
 
 #Rysowanie wykresu
@@ -47,7 +44,7 @@ pylab.grid(True)
 pylab.show()
 
 #Rysowanie wykresu 1 i 2 skladowa
-pylab.scatter(x1, x2)
+pylab.scatter(principalComponents[:,0], principalComponents[:,1])
 pylab.title('Punkty nowych zmiennych')
 pylab.xlabel('Pierwsza skladowa')
 pylab.ylabel('Druga skladowa')
@@ -55,7 +52,7 @@ pylab.grid(True)
 pylab.show()
 
 #Rysowanie wykresu 2 i 3 skladowa
-pylab.scatter(x2, x3)
+pylab.scatter(principalComponents[:,1], principalComponents[:,2])
 pylab.title('Punkty nowych zmiennych')
 pylab.xlabel('Druga skladowa')
 pylab.ylabel('Trzecia skladowa')
